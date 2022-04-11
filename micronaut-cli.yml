@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.seprokof
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle
+features: [app-name, data, data-r2dbc, config-kubernetes, gradle, http-client, java, java-application, junit, logback, lombok, management, micronaut-build, netty-server, openapi, postgres, r2dbc, shade, yaml]
