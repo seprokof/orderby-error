@@ -35,6 +35,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.r2dbc:r2dbc-postgresql'
     runtimeOnly 'io.r2dbc:r2dbc-pool'
+    testImplementation 'org.testcontainers:testcontainers:1.16.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+    testImplementation 'org.testcontainers:postgresql:1.16.3'
 }
 
 application {
@@ -44,4 +47,8 @@ application {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+test {
+    testLogging.showStandardStreams = true
 }
