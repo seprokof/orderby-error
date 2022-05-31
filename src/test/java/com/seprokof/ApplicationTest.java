@@ -1,9 +1,12 @@
 package com.seprokof;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -41,16 +44,21 @@ public class ApplicationTest implements TestPropertyProvider {
     HttpClient client;
 
     @Test
-    public void testSort() {
-        for (int i = 0; i < 3; i++) {
-            SampleEntity se = new SampleEntity(null, "data" + i);
-            HttpResponse<?> response = client.toBlocking().exchange(HttpRequest.POST("/samples", se));
-            assertEquals(201, response.getStatus().getCode());
-        }
-        HttpResponse<?> goodResponse = client.toBlocking().exchange(HttpRequest.GET("/samples"));
-        assertEquals(200, goodResponse.getStatus().getCode());
-        HttpResponse<?> badResponse = client.toBlocking().exchange(HttpRequest.GET("/samples?sort=-data"));
-        assertEquals(200, badResponse.getStatus().getCode());
+    public void testWriteRead() {
+        SampleEntity se = new SampleEntity(null, "data");
+        HttpResponse<?> postResponse = client.toBlocking().exchange(HttpRequest.POST("/samples", se));
+        assertEquals(201, postResponse.getStatus().getCode());
+        String locationHeader = postResponse.getHeaders().get("Location");
+        assertNotNull(locationHeader);
+        String[] urlParts = locationHeader.split("/");
+        assertEquals("1", urlParts[urlParts.length - 1]);
+
+        HttpResponse<SampleEntity> getResponse = client.toBlocking()
+                .exchange(HttpRequest.GET("/samples/" + urlParts[urlParts.length - 1]), SampleEntity.class);
+        assertEquals(200, getResponse.getStatus().getCode());
+        Optional<SampleEntity> body = getResponse.getBody();
+        assertNotNull(body);
+        assertTrue(body.isPresent());
     }
 
     @Override
